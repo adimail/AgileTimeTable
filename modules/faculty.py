@@ -19,6 +19,7 @@ class FacultyProfile:
 
 pbw = FacultyProfile("Mr.P.B.Wakhare", "PBW")
 pbw.add_subject("PSP-I")
+pbw.add_subject("PSP-II")
 pbw.add_division("A")
 pbw.add_division("E")
 print(pbw)
