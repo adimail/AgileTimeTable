@@ -1,7 +1,17 @@
 import pandas as pd
 
-file_path = 'timetable_df.xlsx'
+class TimetableLoader:
+    def __init__(self):
+        self.file_path = 'timetable_df.xlsx'
+        self.timetable_df = None
+        self.timetable_df = pd.read_excel(self.file_path)
+        self.timetable_df[['s-break', 'l-break']] = "Recess"
 
-timetable_df = pd.read_excel(file_path)
-timetable_df[['s-break','l-break']]="Recess"
-print(timetable_df)
+    def print_timetable(self):
+        if self.timetable_df is not None:
+            print(self.timetable_df)
+        else:
+            print("Timetable not loaded yet.")
+
+divA_semII = TimetableLoader()
+divA_semII.print_timetable()
