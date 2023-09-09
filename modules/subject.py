@@ -1,6 +1,5 @@
 import pandas as pd
 
-# Define the Subject class
 class Subject:
     def __init__(self, name, abb, division_dependent, even_term, odd_term, theory_hours, practical_hours):
         self.name = name
