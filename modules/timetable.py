@@ -1,7 +1,8 @@
 import numpy as np
 import datetime
 import pandas as pd
-import division
+from faculty import fy_btech_faculty
+from division import fy_btech_divisions
 from subject import fy_btech_subjects
 
 class TimetableLoader_fe:

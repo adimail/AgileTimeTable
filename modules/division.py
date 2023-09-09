@@ -15,5 +15,3 @@ fy_btech_divisions = [
     Division("H", is_core=1),
     Division("I", is_core=1),
 ]
-
-        
