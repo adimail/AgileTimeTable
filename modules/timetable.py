@@ -1,4 +1,5 @@
 import numpy as np
+import datetime
 import pandas as pd
 
 class TimetableLoader_fe:
@@ -24,7 +25,9 @@ class TimetableLoader_fe:
         timetable_df = pd.DataFrame(data, index=self.days, columns=self.time_slots)
         return timetable_df
 
-    def export_to_excel(self, filename):
+    def export_to_excel(self, filename_prefix="timetable"):
+        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"{filename_prefix}_{current_datetime}.xlsx"
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
 
@@ -33,7 +36,9 @@ lecture = {"subject": "PSP-I", "faculty": "PBW", "location": "111"}
 divE_semII.assign_lecture(0, 0, lecture)
 
 # Export the timetable DataFrame to an Excel file
-divE_semII.export_to_excel('timetable.xlsx')
+divE_semII.export_to_excel()
 
 timetable = divE_semII.create_dataframe()
 print(timetable)
+
+
