@@ -1,29 +1,19 @@
 import pandas as pd
-import numpy as np
 
-# Given data
-subjects = ['EM-I', 'PHY', 'EG', 'BEE', 'EM', 'PBLM-I', 'UHV-I', 'PSP-I', 'PE']
-lectures_per_week = [3, 3, 1, 3, 2, 0, 1, 2, 1]
+data = ['a1', 'a2', 'a3']
 
-days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-time_slots = ['phase1A', 'phase1B', 'phase2A', 'phase2B', 'phase3A', 'phase3B', 'phase3A']
+days = ['mon', 'tue', 'wed', 'thu', 'fri']
 
-# Create an empty timetable DataFrame
-timetable = pd.DataFrame(index=days, columns=time_slots)
+df = pd.DataFrame(columns=data, index=days)
 
-# Create a DataFrame to store lectures
-lecture_schedule = pd.DataFrame(index=subjects, columns=["Total Lectures"])
-lecture_schedule["Total Lectures"] = lectures_per_week
+# The dictionary you want to assign to the cell
+my_dict = {'key1': 'value1', 'key2': 'value2'}
 
-# Fill the timetable with lectures
-for subject, lectures in zip(subjects, lectures_per_week):
-    for _ in range(lectures):
-        day, time_slot = np.where(timetable.isna().values)  # Find empty slots
-        if len(day) > 0:
-            day = day[0]
-            time_slot = time_slot[0]
-            timetable.iloc[day, time_slot] = subject
+# Make sure the column dtype is 'object' to allow storing dictionaries
+# df['a1'] = df['a1'].astype(object)
 
-# Display the final timetable
-print("Final Timetable:")
-print(timetable)
+# Assign the dictionary to the specified cell
+df.at['mon', 'a1'] = my_dict
+
+# Display the updated DataFrame
+print(df)
