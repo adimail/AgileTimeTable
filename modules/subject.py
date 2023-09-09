@@ -1,13 +1,16 @@
 import pandas as pd
 
 class Subject:
-    def __init__(self, name, abb, division_dependent, even_term, odd_term, flag = 0):
+    def __init__(self, name, abb, division_dependent, even_term, odd_term, length=1, flag=9, has_practical=True, has_theory=True):
         self.name = name
         self.abb = abb
         self.division_dependent = division_dependent
         self.even_term = even_term
         self.odd_term = odd_term
+        self.length = length
         self.flag = flag
+        self.has_practical = has_practical
+        self.has_theory = has_theory
 
     def to_dict(self):
         return {
@@ -19,17 +22,6 @@ class Subject:
             "Length": self.length,
             "Flag": self.flag
         }
-
-class theory(Subject):
-    def __init__(self, name, abb, division_dependent, even_term, odd_term, length=1, flag=9, has_practical=True):
-        self.name = name
-        self.abb = abb
-        self.division_dependent = division_dependent
-        self.even_term = even_term
-        self.odd_term = odd_term
-        self.length = length
-        self.flag = flag
-        self.has_practical = has_practical
 
 
 def split_classes(dataframe, is_odd_term=False, is_core=0):
@@ -51,29 +43,32 @@ def split_classes(dataframe, is_odd_term=False, is_core=0):
     
     return df
 
+subjects = [
+    Subject("Engineering Mathematics - I", "EM-I", False, False, True),
+    Subject("Engineering Mathematics - II", "EM-II", False, True, False),
+    Subject("Industrial Chemistry", "CHEM", True, True, True, flag=1),
+    Subject("Engineering Physics", "PHY", True, True, True, flag=0),
+    Subject("Engineering Graphics and Introduction to Cad", "EG", False, False, True),
+    Subject("Environmental Informatics", "EI", False, True, False),
+    Subject("Basic Electronics Engineering", "BXE", True, True, True, flag=1),
+    Subject("Basic Electrical Engineering", "BEE", True, True, True, flag=0),
+    Subject("Engineering Mechanics", "EM", False, False, True),
+    Subject("Basics In Mechanical Engineering", "BME", False, True, False),
+    Subject("Project Based Learning and Management - I", "PBLM-I", False, False, True, has_theory=False),  
+    Subject("Project Based Learning and Management - II", "PBLM-II", False, True, False, has_theory=False),  
+    Subject("Problem Solving and Programming - I", "PSP-I", False, False, True),
+    Subject("Problem Solving and Programming - II", "PSP-II", False, True, False),
+    Subject("Universal Human Values - I", "UHV-I", False, False, True, has_practical=False),  
+    Subject("Universal Human Values - II", "UHV-II", False, True, False, has_practical=False),
+    Subject("Physical Education", "PE", False, True, True, has_practical=False)
+]
 
 theory_subs = [
-    theory("Engineering Mathematics - I", "EM-I", False, False, True),
-    theory("Engineering Mathematics - II", "EM-II", False, True, False),
-    theory("Industrial Chemistry", "CHEM", True, True, True, flag=1),
-    theory("Engineering Physics", "PHY", True, True, True, flag=0),
-    theory("Engineering Graphics and Introduction to Cad", "EG", False, False, True),
-    theory("Environmental Informatics", "EI", False, True, False),
-    theory("Basic Electronics Engineering", "BXE", True, True, True, flag=1),
-    theory("Basic Electrical Engineering", "BEE", True, True, True, flag=0),
-    theory("Engineering Mechanics", "EM", False, False, True),
-    theory("Basics In Mechanical Engineering", "BME", False, True, False),
-    theory("Project Based Learning and Management - I", "PBLM-I", False, False, True),  
-    theory("Project Based Learning and Management - II", "PBLM-II", False, True, False),  
-    theory("Problem Solving and Programming - I", "PSP-I", False, False, True),
-    theory("Problem Solving and Programming - II", "PSP-II", False, True, False),
-    theory("Universal Human Values - I", "UHV-I", False, False, True, has_practical=False),  
-    theory("Universal Human Values - II", "UHV-II", False, True, False, has_practical=False),
-    theory("Physical Education", "PE", False, True, True, has_practical=False)
+    subject for subject in subjects if subject.has_theory
 ]
 
 practical_subs = [
-    subject for subject in theory_subs if subject.has_practical
+    subject for subject in subjects if subject.has_practical
 ]
 
 theory_subject_dicts = [subject.to_dict() for subject in theory_subs]
@@ -89,7 +84,7 @@ sem1_non_computer_theory = split_classes(fy_btech_theory, 1,1)
 sem2_computer_theory = split_classes(fy_btech_theory, 0,0)
 sem2_non_computer_theory = split_classes(fy_btech_theory, 0, 1)
 
-sem1_computer_practical = split_classes(fy_btech_practicals,1,0)
+sem1_computer_practical = split_classes(fy_btech_practicals,1,0)    
 sem1_non_computer_practical = split_classes(fy_btech_practicals,1,1)
 sem2_computer_practical = split_classes(fy_btech_practicals,0,0)
 sem2_non_computer_practical = split_classes(fy_btech_practicals,0,1)
