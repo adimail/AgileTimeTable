@@ -1,10 +1,13 @@
 import numpy as np
 import datetime
 import pandas as pd
+import division
 
 class TimetableLoader_fe:
-    def __init__(self):
+    def __init__(self, term="even", division="non-IT"):
         # Create an empty NumPy array to represent the timetable
+        self.term = term
+        self.division = division
         self.days = ['mon', 'tue', 'wed', 'thu', 'fri']
         self.time_slots = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'C30']
         self.timetable = np.empty((len(self.days), (len(self.time_slots))), dtype=object)
@@ -40,5 +43,3 @@ divE_semII.export_to_excel()
 
 timetable = divE_semII.create_dataframe()
 print(timetable)
-
-

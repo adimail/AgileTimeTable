@@ -1,15 +1,18 @@
+import subject
+import pandas as pd
+
 class FacultyProfile:
-    def __init__(self, name, abbreviation, subjects_taught=None, divisions_assigned=None):
+    def __init__(self, name, abbreviation, subjects_assigned=None, divisions_assigned=None, ):
         self.name = name
         self.abbreviation = abbreviation
-        self.subjects_taught = subjects_taught if subjects_taught is not None else []
+        self.subjects_assigned = subjects_assigned if subjects_assigned is not None else []
         self.divisions_assigned = divisions_assigned if divisions_assigned is not None else []
         self.theory_load = 0
         self.practical_load = 0
 
     def add_subject(self, subject):
         """Add a subject to the list of subjects taught by the faculty."""
-        self.subjects_taught.append(subject)
+        self.subjects_assigned.append(subject)
 
     def add_division(self, division):
         """Add a division to the list of divisions assigned to the faculty."""
@@ -22,7 +25,7 @@ class FacultyProfile:
 
     def __str__(self):
         """String representation of the faculty profile."""
-        return f"Name: {self.name}\nAbbreviation: {self.abbreviation}\nSubjects Taught: {', '.join(self.subjects_taught)}\nDivisions Assigned: {', '.join(self.divisions_assigned)}\nTheory Load: {self.theory_load} hours\nPractical Load: {self.practical_load} hours"
+        return f"Name: {self.name}\nAbbreviation: {self.abbreviation}\nSubjects Taught: {', '.join(self.subjects_assigned)}\nDivisions Assigned: {', '.join(self.divisions_assigned)}\nTheory Load: {self.theory_load} hours\nPractical Load: {self.practical_load} hours"
 
 # Example usage:
 pbw = FacultyProfile("Mr. P.B. Wakhare", "PBW")
