@@ -2,7 +2,7 @@ import numpy as np
 import datetime
 import pandas as pd
 import division
-from subject import subjects
+from subject import fy_btech_subjects
 
 class TimetableLoader_fe:
     def __init__(self, term="even", division="non-IT"):
@@ -35,16 +35,16 @@ class TimetableLoader_fe:
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
 
-# divE_semII = TimetableLoader_fe()
+divE_semII = TimetableLoader_fe()
 
-# timetable = divE_semII.create_dataframe()
-# print(timetable)
+timetable = divE_semII.create_dataframe()
+print(timetable)
 
 
 # Convert the list of Subject objects to a list of dictionaries
-subject_dicts = [subject.to_dict() for subject in subjects]
+# subject_dicts = [subject.to_dict() for subject in fy_btech_subjects]
 
-# Create a DataFrame from the list of dictionaries
-df = pd.DataFrame(subject_dicts)
+# # Create a DataFrame from the list of dictionaries
+# df = pd.DataFrame(subject_dicts)
 
-print(df)
+# print(df)
