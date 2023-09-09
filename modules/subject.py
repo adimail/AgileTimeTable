@@ -26,6 +26,8 @@ class Subject:
 
 # Create different objects for each subject
 subjects = [
+    Subject("Engineering Mathematics - I", "EM-I", False, False, True, 3, 6),
+    Subject("Engineering Mathematics - II", "EM-II", False, True, False, 3, 6),
     Subject("Industrial Chemistry", "CHEM", True, True, True, 3, 6),
     Subject("Engineering Physics", "PHY", True, True, True, 3, 6),
     Subject("Engineering Graphics and Introduction to Cad", "EG", False, False, True, 1, 6),
@@ -34,8 +36,6 @@ subjects = [
     Subject("Basic Electrical Engineering", "BEE", True, True, True, 3, 6),
     Subject("Engineering Mechanics", "EM", False, False, True, 2, 6),
     Subject("Basics In Mechanical Engineering", "BME", False, True, False, 2, 6),
-    Subject("Engineering Mathematics - I", "EM-I", False, False, True, 3, 6),
-    Subject("Engineering Mathematics - II", "EM-II", False, True, False, 3, 6),
     Subject("Project Based Learning and Management - I", "PBLM-I", False, False, True, 0, 6),  # Assuming empty values
     Subject("Project Based Learning and Management - II", "PBLM-II", False, True, False, 0, 6),  # Assuming empty values
     Subject("Problem Solving and Programming - I", "PSP-I", False, False, True, 2, 6),
