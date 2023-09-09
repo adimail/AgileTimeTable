@@ -1,4 +1,5 @@
 import pandas as pd
+from subject import fy_btech_subjects, subject_dicts, subjects
 
 class Faculty:
     def __init__(self, name, abb, assigned_subjects = None, theory_load=0, practical_load=0):
@@ -12,8 +13,6 @@ class Faculty:
     def calculate_total_load(self):
         return self.theory_load + self.practical_load
 
-    def add_subject(self, subject):
-        self.assigned_subjects.append(subject)
 
     def to_dict(self):
         return {
@@ -31,9 +30,9 @@ class Faculty:
 
 # Create objects for faculties based on the provided information
 faculties = [
-    Faculty("Dr. P.G. Musrif", "PGM", ["PHY", "USV-I"]),
-    Faculty("Mr. S.V. Arlikar", "SVA", ["PHY", "USV-I"]),
-    Faculty("Dr. Manisha Raghuvanshi", "MR", ["PHY", "USV-I"]),
+    Faculty("Dr. P.G. Musrif", "PGM", ["PHY", "UHV-I"]),
+    Faculty("Mr. S.V. Arlikar", "SVA", ["PHY", "UHV-I"]),
+    Faculty("Dr. Manisha Raghuvanshi", "MR", ["PHY", "UHV-I"]),
     Faculty("Dr. Y.P.Patil", "YPP", ["CHEM"]),
     Faculty("Dr. Nidhi Sharma", "NS", ["CHEM"]),
     Faculty("Mr. P.G.Mahajan", "PGM", ["CHEM"]),
@@ -41,20 +40,20 @@ faculties = [
     Faculty("Mrs. A.A. Athawale", "AAA", ["EM"]),
     Faculty("Mr. A.H.Raheja", "AHR", ["EM"]),
     Faculty("Mr. V. D. Deshmukh", "VDD", ["EM"]),
-    Faculty("Mr. R. B. Tope", "RBT", ["EM-I", "Applied Mathematics (ENTC)"]),
-    Faculty("Mr. N. A. Shaikh", "NAS", ["EM-I", "Discrete Mathematics and Statistics (AIDS)"]),
+    Faculty("Mr. R. B. Tope", "RBT", ["EM-I"]),
+    Faculty("Mr. N. A. Shaikh", "NAS", ["EM-I"]),
     Faculty("Mr. P.S. Gaur", "PSG", ["EM-I"]),
     Faculty("Mr. P. B. Shinde", "PBS", ["EM-I"]),
     Faculty("Mr. D.S.Shelar", "DSS", ["EM-I"]),
     Faculty("Ms. S. S. Raskar", "SSR", ["EM-I"]),
-    Faculty("Mr. M.B.Nigade", "MBN", ["EG", "PBLM-I", "EG- Activity"]),
-    Faculty("Mr. A. J. More", "AJM", ["EG", "PBLM-I", "EG- Activity"]),
-    Faculty("Mr. S.S. Gadadhe", "SSG", ["EG", "PBLM-I", "EG- Activity", "USV-I"]),
-    Faculty("Mr. N.P.Bhone", "NPB", ["EG", "PBLM-I", "EG- Activity"]),
-    Faculty("Dr.Naseem Khayyum", "NK", ["EG", "PBLM-I", "EG- Activity"]),
-    Faculty("Mr. A.S. Apate", "ASA", ["EG", "PBLM-I", "EG- Activity", "USV-I"]),
-    Faculty("Mr. N.D.Gaikwad", "NDG", ["EG", "PBLM-I", "EG- Activity"]),
-    Faculty("Dr. Pritam Saha", "PS", ["EG", "PBLM-I", "EG- Activity"]),
+    Faculty("Mr. M.B.Nigade", "MBN", ["EG", "PBLM-I", "EG-Activity"]),
+    Faculty("Mr. A. J. More", "AJM", ["EG", "PBLM-I", "EG-Activity"]),
+    Faculty("Mr. S.S. Gadadhe", "SSG", ["EG", "PBLM-I", "EG-Activity", "UHV-I"]),
+    Faculty("Mr. N.P.Bhone", "NPB", ["EG", "PBLM-I", "EG-Activity"]),
+    Faculty("Dr.Naseem Khayyum", "NK", ["EG", "PBLM-I", "EG-Activity"]),
+    Faculty("Mr. A.S. Apate", "ASA", ["EG", "PBLM-I", "EG-Activity", "UHV-I"]),
+    Faculty("Mr. N.D.Gaikwad", "NDG", ["EG", "PBLM-I", "EG-Activity"]),
+    Faculty("Dr. Pritam Saha", "PS", ["EG", "PBLM-I", "EG-Activity"]),
     Faculty("Mr. P.A. Patil", "PAP", ["BXE"]),
     Faculty("Mr. C. K,Bhange", "CKB", ["BXE"]),
     Faculty("Mrs. Supriya Lohar", "SL", ["BXE"]),
@@ -74,3 +73,24 @@ faculty_dicts = [faculty.to_dict() for faculty in faculties]
 fy_btech_faculty = pd.DataFrame(faculty_dicts)
 
 # print(fy_btech_faculty)
+
+def sort_faculty(*subjects):
+    result_df = pd.DataFrame()
+    for subject in subjects:
+        subject_df = fy_btech_faculty[fy_btech_faculty['Assigned Subjects'].apply(lambda x: subject in x)]
+        subject_df.reset_index(drop=True, inplace=True)
+        result_df = pd.concat([result_df, subject_df], ignore_index=True)
+    
+    return result_df
+
+bee_faculty_df = sort_faculty('BEE')
+bme_faculty_df = sort_faculty('BME')
+bxe_faculty_df = sort_faculty('BXE')
+eg_faculty_df = sort_faculty('EG')
+math_faculty_df = sort_faculty('EM-I', 'EM-II')
+pblm_faculty_df = sort_faculty('PBLM-I', 'PBLM-II')
+psp_faculty_df = sort_faculty('PSP-I', 'PSP-II')
+em_faculty_df = sort_faculty('EM')
+
+# Print the new DataFrame
+print(eg_faculty_df)

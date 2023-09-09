@@ -43,4 +43,10 @@ subject_dicts = [subject.to_dict() for subject in subjects]
 
 # Create a DataFrame from the list of dictionaries
 fy_btech_subjects = pd.DataFrame(subject_dicts)
-print(fy_btech_subjects)
+# print(fy_btech_subjects)
+
+odd_term_subjects = fy_btech_subjects[fy_btech_subjects['Odd Term'] == True]
+# print(odd_term_subjects)
+
+odd_and_division_independent_subjects = fy_btech_subjects[(fy_btech_subjects['Odd Term'] == True) & (fy_btech_subjects['Division Dependent'] == False)]
+# print(odd_and_division_independent_subjects)
