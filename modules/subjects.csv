@@ -1,0 +1,18 @@
+name,abb,division_dependent,even term,odd term,theory_hours,practical_hours,total_load
+Engineering Mathematics - I,EM-I,FALSE,FALSE,TRUE,3,6,9
+Engineering Mathematics - II,EM-II,FALSE,TRUE,FALSE,3,6,9
+Industrial Chemistry,CHEM,TRUE,TRUE,TRUE,3,6,9
+Engineering Physics,PHY,TRUE,TRUE,TRUE,3,6,9
+Engineering Graphics and Introduction to Cad,EG,FALSE,FALSE,TRUE,1,6,7
+Environmental Informatics,EI,FALSE,TRUE,FALSE,1,6,7
+Basic Electronics Engineering,BXE,TRUE,TRUE,TRUE,3,6,9
+Basic Electrical Engineering,BEE,TRUE,TRUE,TRUE,3,6,9
+Engineering Mechanics,EM,FALSE,FALSE,TRUE,2,6,8
+Basics In Mechanical Engineering,BME,FALSE,TRUE,FALSE,2,6,8
+Project Based Learning and Management - I,PBLM-I,FALSE,FALSE,TRUE,,6,6
+Project Based Learning and Management - II,PBLM-II,FALSE,TRUE,FALSE,,6,6
+Problem Solving and Programming - I,PSP-I,FALSE,FALSE,TRUE,2,6,8
+Problem Solving and Programming - II,PSP-II,FALSE,TRUE,FALSE,2,6,8
+Universal Human Values - I,UHV-I,FALSE,FALSE,TRUE,1,,1
+Universal Human Values - II,UHV-II,FALSE,TRUE,FALSE,1,,1
+Physical Education,PE,FALSE,TRUE,TRUE,1,,1

@@ -1,4 +1,4 @@
-import subject
+# import subject
 import pandas as pd
 
 class FacultyProfile:
