@@ -1,12 +1,13 @@
 import pandas as pd
 
 class Subject:
-    def __init__(self, name, abb, division_dependent, even_term, odd_term):
+    def __init__(self, name, abb, division_dependent, even_term, odd_term, flag = 0):
         self.name = name
         self.abb = abb
         self.division_dependent = division_dependent
         self.even_term = even_term
         self.odd_term = odd_term
+        self.flag = flag
 
     def to_dict(self):
         return {
@@ -15,38 +16,80 @@ class Subject:
             "Division Dependent": self.division_dependent,
             "Even Term": self.even_term,
             "Odd Term": self.odd_term,
+            "Length": self.length,
+            "Flag": self.flag
         }
 
-# Create different objects for each subject
-subjects = [
-    Subject("Engineering Mathematics - I", "EM-I", False, False, True),
-    Subject("Engineering Mathematics - II", "EM-II", False, True, False),
-    Subject("Industrial Chemistry", "CHEM", True, True, True),
-    Subject("Engineering Physics", "PHY", True, True, True),
-    Subject("Engineering Graphics and Introduction to Cad", "EG", False, False, True),
-    Subject("Environmental Informatics", "EI", False, True, False),
-    Subject("Basic Electronics Engineering", "BXE", True, True, True),
-    Subject("Basic Electrical Engineering", "BEE", True, True, True),
-    Subject("Engineering Mechanics", "EM", False, False, True),
-    Subject("Basics In Mechanical Engineering", "BME", False, True, False),
-    Subject("Project Based Learning and Management - I", "PBLM-I", False, False, True),  # Assuming empty values
-    Subject("Project Based Learning and Management - II", "PBLM-II", False, True, False),  # Assuming empty values
-    Subject("Problem Solving and Programming - I", "PSP-I", False, False, True),
-    Subject("Problem Solving and Programming - II", "PSP-II", False, True, False),
-    Subject("Universal Human Values - I", "UHV-I", False, False, True),  # Assuming empty values for practical
-    Subject("Universal Human Values - II", "UHV-II", False, True, False),  # Assuming empty values for practical
-    Subject("Physical Education", "PE", False, True, True),  # Assuming empty values for practical
+class theory(Subject):
+    def __init__(self, name, abb, division_dependent, even_term, odd_term, length=1, flag=9, has_practical=True):
+        self.name = name
+        self.abb = abb
+        self.division_dependent = division_dependent
+        self.even_term = even_term
+        self.odd_term = odd_term
+        self.length = length
+        self.flag = flag
+        self.has_practical = has_practical
+
+
+def split_classes(dataframe, is_odd_term=False, is_core=0):
+    if(is_core ):
+        if(is_odd_term):
+            flag = 0
+        else:
+            flag = 1
+    else:
+        if(is_odd_term):
+            flag = 1
+        else:
+            flag = 0
+
+    df = pd.DataFrame()
+    df = dataframe[((dataframe['Odd Term'] == is_odd_term) & (dataframe['Division Dependent'] == 0)) | ((dataframe['Division Dependent'] == 1) & (dataframe['Flag'] == flag))]
+    df.reset_index(drop=True, inplace=True)
+    df.index += 1
+    
+    return df
+
+
+theory_subs = [
+    theory("Engineering Mathematics - I", "EM-I", False, False, True),
+    theory("Engineering Mathematics - II", "EM-II", False, True, False),
+    theory("Industrial Chemistry", "CHEM", True, True, True, flag=1),
+    theory("Engineering Physics", "PHY", True, True, True, flag=0),
+    theory("Engineering Graphics and Introduction to Cad", "EG", False, False, True),
+    theory("Environmental Informatics", "EI", False, True, False),
+    theory("Basic Electronics Engineering", "BXE", True, True, True, flag=1),
+    theory("Basic Electrical Engineering", "BEE", True, True, True, flag=0),
+    theory("Engineering Mechanics", "EM", False, False, True),
+    theory("Basics In Mechanical Engineering", "BME", False, True, False),
+    theory("Project Based Learning and Management - I", "PBLM-I", False, False, True),  
+    theory("Project Based Learning and Management - II", "PBLM-II", False, True, False),  
+    theory("Problem Solving and Programming - I", "PSP-I", False, False, True),
+    theory("Problem Solving and Programming - II", "PSP-II", False, True, False),
+    theory("Universal Human Values - I", "UHV-I", False, False, True, has_practical=False),  
+    theory("Universal Human Values - II", "UHV-II", False, True, False, has_practical=False),
+    theory("Physical Education", "PE", False, True, True, has_practical=False)
 ]
 
-# Convert the list of Subject objects to a list of dictionaries
-subject_dicts = [subject.to_dict() for subject in subjects]
+practical_subs = [
+    subject for subject in theory_subs if subject.has_practical
+]
 
-# Create a DataFrame from the list of dictionaries
-fy_btech_subjects = pd.DataFrame(subject_dicts)
-# print(fy_btech_subjects)
+theory_subject_dicts = [subject.to_dict() for subject in theory_subs]
+fy_btech_theory = pd.DataFrame(theory_subject_dicts)
+fy_btech_theory['Course type'] = "Theory"
 
-odd_term_subjects = fy_btech_subjects[fy_btech_subjects['Odd Term'] == True]
-# print(odd_term_subjects)
+practical_subject_dicts = [subject.to_dict() for subject in practical_subs]
+fy_btech_practicals = pd.DataFrame(practical_subject_dicts)
+fy_btech_practicals['Course type'] = "Practical"
 
-odd_and_division_independent_subjects = fy_btech_subjects[(fy_btech_subjects['Odd Term'] == True) & (fy_btech_subjects['Division Dependent'] == False)]
-# print(odd_and_division_independent_subjects)
+sem1_computer_theory = split_classes(fy_btech_theory, 1,0)
+sem1_non_computer_theory = split_classes(fy_btech_theory, 1,1)
+sem2_computer_theory = split_classes(fy_btech_theory, 0,0)
+sem2_non_computer_theory = split_classes(fy_btech_theory, 0, 1)
+
+sem1_computer_practical = split_classes(fy_btech_practicals,1,0)
+sem1_non_computer_practical = split_classes(fy_btech_practicals,1,1)
+sem2_computer_practical = split_classes(fy_btech_practicals,0,0)
+sem2_non_computer_practical = split_classes(fy_btech_practicals,0,1)
