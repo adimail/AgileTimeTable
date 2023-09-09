@@ -2,6 +2,7 @@ import numpy as np
 import datetime
 import pandas as pd
 import division
+from subject import subjects
 
 class TimetableLoader_fe:
     def __init__(self, term="even", division="non-IT"):
@@ -9,7 +10,7 @@ class TimetableLoader_fe:
         self.term = term
         self.division = division
         self.days = ['mon', 'tue', 'wed', 'thu', 'fri']
-        self.time_slots = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'C30']
+        self.time_slots = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'C3']
         self.timetable = np.empty((len(self.days), (len(self.time_slots))), dtype=object)
 
     def assign_lecture(self, row, col, lecture):
@@ -34,12 +35,16 @@ class TimetableLoader_fe:
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
 
-divE_semII = TimetableLoader_fe()
-lecture = {"subject": "PSP-I", "faculty": "PBW", "location": "111"}
-divE_semII.assign_lecture(0, 0, lecture)
+# divE_semII = TimetableLoader_fe()
 
-# Export the timetable DataFrame to an Excel file
-divE_semII.export_to_excel()
+# timetable = divE_semII.create_dataframe()
+# print(timetable)
 
-timetable = divE_semII.create_dataframe()
-print(timetable)
+
+# Convert the list of Subject objects to a list of dictionaries
+subject_dicts = [subject.to_dict() for subject in subjects]
+
+# Create a DataFrame from the list of dictionaries
+df = pd.DataFrame(subject_dicts)
+
+print(df)

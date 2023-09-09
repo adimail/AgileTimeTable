@@ -24,7 +24,7 @@ class Subject:
         }
 
 # Create different objects for each subject
-subjects = [
+fy_btech_subjects = [
     Subject("Engineering Mathematics - I", "EM-I", False, False, True, 3, 6),
     Subject("Engineering Mathematics - II", "EM-II", False, True, False, 3, 6),
     Subject("Industrial Chemistry", "CHEM", True, True, True, 3, 6),
@@ -44,10 +44,10 @@ subjects = [
     Subject("Physical Education", "PE", False, True, True, 1, 0),  # Assuming empty values for practical
 ]
 
-# Convert the list of Subject objects to a list of dictionaries
-subject_dicts = [subject.to_dict() for subject in subjects]
+# # Convert the list of Subject objects to a list of dictionaries
+# subject_dicts = [subject.to_dict() for subject in fy_btech_subjects]
 
-# Create a DataFrame from the list of dictionaries
-df = pd.DataFrame(subject_dicts)
+# # Create a DataFrame from the list of dictionaries
+# df = pd.DataFrame(subject_dicts)
 
-print(df)
+# print(df)
