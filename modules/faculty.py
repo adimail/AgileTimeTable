@@ -1,5 +1,4 @@
 import pandas as pd
-from subject import fy_btech_subjects, subject_dicts, subjects
 
 class Faculty:
     def __init__(self, name, abb, assigned_subjects = None, theory_load=0, practical_load=0):
@@ -92,5 +91,5 @@ pblm_faculty_df = sort_faculty('PBLM-I', 'PBLM-II')
 psp_faculty_df = sort_faculty('PSP-I', 'PSP-II')
 em_faculty_df = sort_faculty('EM')
 
-# Print the new DataFrame
-print(eg_faculty_df)
+
+# print(bxe_faculty_df)

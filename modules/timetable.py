@@ -1,9 +1,9 @@
 import numpy as np
 import datetime
 import pandas as pd
+import subject
 from faculty import fy_btech_faculty
 from division import fy_btech_divisions
-from subject import fy_btech_subjects
 
 class TimetableLoader_fe:
     def __init__(self, term="even", division="non-IT"):
@@ -39,9 +39,12 @@ class TimetableLoader_fe:
 divE_semII = TimetableLoader_fe()
 
 timetable = divE_semII.create_dataframe()
+
+theory_lecture = ["BME",2]
+divE_semII.assign_lecture(0,0,theory_lecture)
+
+
 print(timetable)
-
-
 # Convert the list of Subject objects to a list of dictionaries
 # subject_dicts = [subject.to_dict() for subject in fy_btech_subjects]
 

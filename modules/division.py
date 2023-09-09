@@ -32,4 +32,4 @@ division_dicts = [division.to_dict() for division in divisions]
 
 # Create a DataFrame from the list of dictionaries
 fy_btech_divisions = pd.DataFrame(division_dicts)
-print(fy_btech_divisions)
+# print(fy_btech_divisions)
