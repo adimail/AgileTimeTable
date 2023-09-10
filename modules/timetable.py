@@ -20,15 +20,14 @@ class TimetableLoader_fe:
 
     def assign_lecture_randomly(self, lecture):
         if lecture['Abbreviation'] == 'PE':
-            empty_cells = [(i, len(self.time_slots) - 1) for i in range(len(self.days)) if self.timetable[i, len(self.time_slots) - 1] is None]
+            empty_cells = [(i, 6) for i in range(5) if self.timetable[i, 6] is None]
         else:
             empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)-1) if self.timetable[i, j] is None]
 
         if empty_cells:
             random_cell = random.choice(empty_cells)
             self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
-
-
+            # print(empty_cells)
 
     def print_timetable(self):
         # Iterate over rows and columns to print only the subject name
@@ -50,7 +49,6 @@ class TimetableLoader_fe:
         timetable_df.to_excel(filename)
 
 def extract_columns(dataframe):
-    columns_to_extract = ['Name', 'Theory hours', 'Abbreviation']
     result_list = []
 
     for _, row in dataframe.iterrows():
@@ -63,27 +61,35 @@ def extract_columns(dataframe):
 
     return result_list
 
-divE_semII = TimetableLoader_fe()
+divE_semI_theory = TimetableLoader_fe()
 
 theory_lectures = extract_columns(subject.sem1_computer_theory)
 
 random.shuffle(theory_lectures)
 
 for lecture in theory_lectures:
-    divE_semII.assign_lecture_randomly(lecture)
+    divE_semI_theory.assign_lecture_randomly(lecture)
 
-timetable = divE_semII.create_dataframe()
+timetable = divE_semI_theory.create_dataframe()
 timetable = timetable.fillna("--")
 print(timetable)
 
 # for i, lecture in enumerate(theory_lectures):
-#     row_index = i // len(divE_semII.time_slots)
-#     col_index = i % len(divE_semII.time_slots)
-#     divE_semII.assign_lecture(row_index, col_index, lecture)
+#     row_index = i // len(divE_semI_theory.time_slots)
+#     col_index = i % len(divE_semI_theory.time_slots)
+#     divE_semI_theory.assign_lecture(row_index, col_index, lecture)
 
-# timetable = divE_semII.create_dataframe()
+# timetable = divE_semI_theory.create_dataframe()
 # print(timetable)
 
 
 # for item in result_list:
 #     print(item['Abbreviation'])
+
+# odd_cells = [(0, 0), (0, 2), (0, 4)]
+# random_cell = (0, 0)
+
+# if random_cell in odd_cells:
+#     print("Exists")
+
+# print(subject.sem1_computer_practical)

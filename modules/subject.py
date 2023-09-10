@@ -26,7 +26,7 @@ class Subject:
         }
 
 
-def split_classes(dataframe, is_odd_term=False, is_core=0):
+def split_classes(dataframe, is_odd_term=False, is_core=0, pr_suffix=False):
     if(is_core ):
         if(is_odd_term):
             flag = 0
@@ -42,7 +42,8 @@ def split_classes(dataframe, is_odd_term=False, is_core=0):
     df = dataframe[((dataframe['Odd Term'] == is_odd_term) & (dataframe['Division Dependent'] == 0)) | ((dataframe['Division Dependent'] == 1) & (dataframe['Flag'] == flag))]
     df.reset_index(drop=True, inplace=True)
     df.index += 1
-    
+    if(pr_suffix):
+        df.loc[:, 'Abbreviation'] = df['Abbreviation'].apply(lambda x: x + "(pr)")
     return df
 
 subjects = [
@@ -50,7 +51,7 @@ subjects = [
     Subject("Engineering Mathematics - II", "EM-II",3,2, False, True, False),
     Subject("Industrial Chemistry", "CHEM",3,2, True, True, True, flag=1),
     Subject("Engineering Physics", "PHY",3,2, True, True, True, flag=0),
-    Subject("Engineering Graphics and Introduction to Cad", "EG",1,2, False, False, True),
+    Subject("Engineering Graphics and Introduction to Cad", "EG",2,2, False, False, True),
     Subject("Environmental Informatics", "EI",1,2, False, True, False),
     Subject("Basic Electronics Engineering", "BXE",3,2, True, True, True, flag=1),
     Subject("Basic Electrical Engineering", "BEE",3,2, True, True, True, flag=0),
@@ -86,9 +87,9 @@ sem1_non_computer_theory = split_classes(fy_btech_theory, 1,1)
 sem2_computer_theory = split_classes(fy_btech_theory, 0,0)
 sem2_non_computer_theory = split_classes(fy_btech_theory, 0, 1)
 
-sem1_computer_practical = split_classes(fy_btech_practicals,1,0)    
-sem1_non_computer_practical = split_classes(fy_btech_practicals,1,1)
-sem2_computer_practical = split_classes(fy_btech_practicals,0,0)
-sem2_non_computer_practical = split_classes(fy_btech_practicals,0,1)
+sem1_computer_practical = split_classes(fy_btech_practicals,1,0,1)
+sem1_non_computer_practical = split_classes(fy_btech_practicals,1,1,1)
+sem2_computer_practical = split_classes(fy_btech_practicals,0,0,1)
+sem2_non_computer_practical = split_classes(fy_btech_practicals,0,1,1)
 
 # print(sem2_computer_practical)
