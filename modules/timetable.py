@@ -1,6 +1,7 @@
 import numpy as np
 import datetime
 import pandas as pd
+import random
 import subject
 from faculty import fy_btech_faculty
 from division import fy_btech_divisions
@@ -15,7 +16,15 @@ class TimetableLoader_fe:
         self.timetable = np.empty((len(self.days), (len(self.time_slots))), dtype=object)
 
     def assign_lecture(self, row, col, lecture):
-        self.timetable[row, col] = lecture
+        self.timetable[row, col] = lecture['Abbreviation']
+
+    def assign_lecture_randomly(self, lecture):
+        # Find an empty cell randomly and assign the lecture
+        empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)) if self.timetable[i, j] is None]
+        if empty_cells:
+            random_cell = random.choice(empty_cells)
+            self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+
 
     def print_timetable(self):
         # Iterate over rows and columns to print only the subject name
@@ -36,19 +45,34 @@ class TimetableLoader_fe:
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
 
+def extract_columns(dataframe):
+    columns_to_extract = ['Name', 'Theory hours', 'Abbreviation']
+    result_list = []
+    for _, row in dataframe[columns_to_extract].iterrows():
+        result_list.append(dict(row))
+
+    return result_list
+
 divE_semII = TimetableLoader_fe()
 
+theory_lectures = extract_columns(subject.sem1_computer_theory)
+
+random.shuffle(theory_lectures)
+
+for lecture in theory_lectures:
+    divE_semII.assign_lecture_randomly(lecture)
+
 timetable = divE_semII.create_dataframe()
-
-theory_lecture = ["BME",2]
-divE_semII.assign_lecture(0,0,theory_lecture)
-
-
 print(timetable)
-# Convert the list of Subject objects to a list of dictionaries
-# subject_dicts = [subject.to_dict() for subject in fy_btech_subjects]
 
-# # Create a DataFrame from the list of dictionaries
-# df = pd.DataFrame(subject_dicts)
+# for i, lecture in enumerate(theory_lectures):
+#     row_index = i // len(divE_semII.time_slots)
+#     col_index = i % len(divE_semII.time_slots)
+#     divE_semII.assign_lecture(row_index, col_index, lecture)
 
-# print(df)
+# timetable = divE_semII.create_dataframe()
+# print(timetable)
+
+
+# for item in result_list:
+#     print(item['Abbreviation'])
