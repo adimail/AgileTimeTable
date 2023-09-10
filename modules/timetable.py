@@ -19,11 +19,15 @@ class TimetableLoader_fe:
         self.timetable[row, col] = lecture['Abbreviation']
 
     def assign_lecture_randomly(self, lecture):
-        # Find an empty cell randomly and assign the lecture
-        empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)) if self.timetable[i, j] is None]
+        if lecture['Abbreviation'] == 'PE':
+            empty_cells = [(i, len(self.time_slots) - 1) for i in range(len(self.days)) if self.timetable[i, len(self.time_slots) - 1] is None]
+        else:
+            empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)-1) if self.timetable[i, j] is None]
+
         if empty_cells:
             random_cell = random.choice(empty_cells)
             self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+
 
 
     def print_timetable(self):
@@ -48,8 +52,14 @@ class TimetableLoader_fe:
 def extract_columns(dataframe):
     columns_to_extract = ['Name', 'Theory hours', 'Abbreviation']
     result_list = []
-    for _, row in dataframe[columns_to_extract].iterrows():
-        result_list.append(dict(row))
+
+    for _, row in dataframe.iterrows():
+        name = row['Name']
+        abbreviation = row['Abbreviation']
+        hours = row['Theory hours']
+        
+        # Extend the result list with the lecture abbreviation repeated according to its assigned hours
+        result_list.extend([{'Name': name, 'Abbreviation': abbreviation}] * hours)
 
     return result_list
 
@@ -63,6 +73,7 @@ for lecture in theory_lectures:
     divE_semII.assign_lecture_randomly(lecture)
 
 timetable = divE_semII.create_dataframe()
+timetable = timetable.fillna("--")
 print(timetable)
 
 # for i, lecture in enumerate(theory_lectures):
