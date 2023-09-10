@@ -19,15 +19,23 @@ class TimetableLoader_fe:
         self.timetable[row, col] = lecture['Abbreviation']
 
     def assign_lecture_randomly(self, lecture):
-        if lecture['Abbreviation'] == 'PE':
-            empty_cells = [(i, 6) for i in range(5) if self.timetable[i, 6] is None]
-        else:
-            empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)-1) if self.timetable[i, j] is None]
+        practical_cells = [(i, j) for i in range(0, 5) for j in range(0, 6, 2) if self.timetable[i, j] is None]
+        if lecture['Course type'] == 'Theory':
+            if lecture['Abbreviation'] == 'PE':
+                empty_cells = [(i, 6) for i in range(5) if self.timetable[i, 6] is None]
+            else:
+                empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)-1) if self.timetable[i, j] is None]
 
-        if empty_cells:
-            random_cell = random.choice(empty_cells)
-            self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+            if empty_cells:
+                random_cell = random.choice(empty_cells)
+                self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
             # print(empty_cells)
+
+        if lecture['Course type'] == 'Practical':
+            if practical_cells:
+                random_cell = random.choice(practical_cells)
+                self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+                self.timetable[random_cell[0], random_cell[1]+1] = lecture['Abbreviation']
 
     def print_timetable(self):
         # Iterate over rows and columns to print only the subject name
@@ -55,41 +63,94 @@ def extract_columns(dataframe):
         name = row['Name']
         abbreviation = row['Abbreviation']
         hours = row['Theory hours']
-        
+        practical_hours = row['Practical hours (per batch)']
+        course_type = row['Course type']
         # Extend the result list with the lecture abbreviation repeated according to its assigned hours
-        result_list.extend([{'Name': name, 'Abbreviation': abbreviation}] * hours)
-
+        if(course_type=='Theory'):
+            result_list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}] * hours)
+        else:
+            result_list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}])
     return result_list
 
-divE_semI_theory = TimetableLoader_fe()
+def generate_tt(sem=1, is_theory=1, is_comp=1):
+    df = TimetableLoader_fe()
+    if(sem==1):
+        if(is_comp):    
+            if(is_theory):
+                lectures = extract_columns(subject.sem1_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem1_computer_practical)
+        else:
+            if(is_theory):
+                lectures = extract_columns(subject.sem1_non_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem1_non_computer_theory)
+    else:
+        if(is_comp):    
+            if(is_theory):
+                lectures = extract_columns(subject.sem2_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem2_computer_practical)
+        else:
+            if(is_theory):
+                lectures = extract_columns(subject.sem2_non_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem2_non_computer_theory)
 
-theory_lectures = extract_columns(subject.sem1_computer_theory)
+    random.shuffle(lectures)
 
-random.shuffle(theory_lectures)
+    for period in lectures:
+        df.assign_lecture_randomly(period)
 
-for lecture in theory_lectures:
-    divE_semI_theory.assign_lecture_randomly(lecture)
+    timetable = df.create_dataframe()
+    timetable = timetable.fillna("--")
 
-timetable = divE_semI_theory.create_dataframe()
-timetable = timetable.fillna("--")
-print(timetable)
-
-# for i, lecture in enumerate(theory_lectures):
-#     row_index = i // len(divE_semI_theory.time_slots)
-#     col_index = i % len(divE_semI_theory.time_slots)
-#     divE_semI_theory.assign_lecture(row_index, col_index, lecture)
-
-# timetable = divE_semI_theory.create_dataframe()
-# print(timetable)
+    return timetable
 
 
-# for item in result_list:
-#     print(item['Abbreviation'])
+def genrate_timetable_for_division(sem=1, is_comp=1):
+    df = TimetableLoader_fe()
+    if(sem==1):
+        if(is_comp):    
+            lectures = extract_columns(subject.sem1_computer_theory)
+        else:
+            lectures = extract_columns(subject.sem1_non_computer_theory)
+    else:
+        if(is_comp):    
+            lectures = extract_columns(subject.sem2_computer_theory)
+        else:
+            lectures = extract_columns(subject.sem2_non_computer_theory)
+    random.shuffle(lectures)
 
-# odd_cells = [(0, 0), (0, 2), (0, 4)]
-# random_cell = (0, 0)
+    for period in lectures:
+        df.assign_lecture_randomly(period)
 
-# if random_cell in odd_cells:
-#     print("Exists")
+    if(sem==1):
+        if(is_comp):    
+            lectures = extract_columns(subject.sem1_computer_practical)
+        else:
+            lectures = extract_columns(subject.sem1_non_computer_practical)
+    else:
+        if(is_comp):    
+            lectures = extract_columns(subject.sem2_computer_practical)
+        else:
+            lectures = extract_columns(subject.sem2_non_computer_practical)
+    random.shuffle(lectures)
 
-# print(subject.sem1_computer_practical)
+    for period in lectures:
+        df.assign_lecture_randomly(period)
+
+    timetable = df.create_dataframe()
+    timetable = timetable.fillna("--")
+
+    return timetable
+
+
+# divE_semII_practical = generate_tt(sem=2,is_theory=0,is_comp=1)
+# print(divE_semII_practical)
+
+# divE_semII_theory = generate_tt(sem=2,is_theory=1,is_comp=1)
+# print(divE_semII_theory)
+
+# divE_semII = genrate_timetable_for_division(2,1)
+# print(divE_semII)

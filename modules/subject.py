@@ -44,6 +44,7 @@ def split_classes(dataframe, is_odd_term=False, is_core=0, pr_suffix=False):
     df.index += 1
     if(pr_suffix):
         df.loc[:, 'Abbreviation'] = df['Abbreviation'].apply(lambda x: x + "(pr)")
+        
     return df
 
 subjects = [
