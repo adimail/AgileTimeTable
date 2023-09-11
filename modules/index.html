@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dataframe Display</title>
+</head>
+<body>
+    <h1>Dataframe Display</h1>
+    <table id="data-table">
+        <!-- Table content will be populated here -->
+    </table>
+
+    <script>
+        fetch('http://localhost:5000/api/dataframe')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('data-table');
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    for (const key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            const td = document.createElement('td');
+                            td.textContent = row[key];
+                            tr.appendChild(td);
+                        }
+                    }
+                    table.appendChild(tr);
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>

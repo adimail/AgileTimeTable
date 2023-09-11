@@ -29,7 +29,6 @@ class TimetableLoader_fe:
             if empty_cells:
                 random_cell = random.choice(empty_cells)
                 self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
-            # print(empty_cells)
 
         if lecture['Course type'] == 'Practical':
             if practical_cells:
@@ -55,6 +54,45 @@ class TimetableLoader_fe:
         filename = f"{filename_prefix}_{current_datetime}.xlsx"
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
+
+    def generate_complete_timetable(self, sem=1, is_theory=1, is_comp=1):
+        if sem == 1:
+            if is_comp:
+                practical_lectures = extract_columns(subject.sem1_computer_practical)
+            else:
+                practical_lectures = extract_columns(subject.sem1_non_computer_practical)
+        else:
+            if is_comp:
+                practical_lectures = extract_columns(subject.sem2_computer_practical)
+            else:
+                practical_lectures = extract_columns(subject.sem2_non_computer_practical)
+
+        random.shuffle(practical_lectures)
+
+        for period in practical_lectures:
+            self.assign_lecture_randomly(period)
+
+        if sem == 1:
+            if is_comp:
+                lectures = extract_columns(subject.sem1_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem1_non_computer_theory)
+        else:
+            if is_comp:
+                lectures = extract_columns(subject.sem2_computer_theory)
+            else:
+                lectures = extract_columns(subject.sem2_non_computer_theory)
+
+        random.shuffle(lectures)
+
+        for period in lectures:
+            self.assign_lecture_randomly(period)
+
+        timetable = self.create_dataframe()
+        timetable = timetable.fillna("--")
+
+        return timetable
+
 
 def extract_columns(dataframe):
     result_list = []
@@ -154,3 +192,8 @@ def genrate_timetable_for_division(sem=1, is_comp=1):
 
 # divE_semII = genrate_timetable_for_division(2,1)
 # print(divE_semII)
+
+div_e = TimetableLoader_fe()
+
+complete_timetable = div_e.generate_complete_timetable(sem=1, is_theory=1, is_comp=1)
+print(complete_timetable)

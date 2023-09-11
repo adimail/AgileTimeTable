@@ -25,7 +25,6 @@ class Subject:
             "Flag": self.flag
         }
 
-
 def split_classes(dataframe, is_odd_term=False, is_core=0, pr_suffix=False):
     if(is_core ):
         if(is_odd_term):
