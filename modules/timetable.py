@@ -21,11 +21,9 @@ class TimetableLoader_fe:
         self.timetable[row, col] = lecture['Abbreviation']
 
     def assign_lecture_randomly(self, lecture):
+        
         practical_cells = [(i, j) for i in range(0, 5) for j in range(0, 6, 2) if self.timetable[i, j] is None]
         
-        # practical_cells = [cell for key, group in groupby(sorted(practical_cells), key=lambda x: x[0]) for cell in random.sample(list(group), min(2, len(list(group))))][:7]
-
-
         if lecture['Course type'] == 'Theory':
             if lecture['Abbreviation'] == 'PE':
                 empty_cells = [(i, 6) for i in range(5) if self.timetable[i, 6] is None]
@@ -62,7 +60,7 @@ class TimetableLoader_fe:
         timetable_df = self.create_dataframe()
         timetable_df.to_excel(filename)
 
-    def generate_complete_timetable(self, sem=1, is_theory=1, is_comp=1):
+    def generate_complete_timetable(self, sem=1, is_comp=1):
         if sem == 1:
             if is_comp:
                 practical_lectures = extract_columns(subject.sem1_computer_practical)
@@ -82,9 +80,9 @@ class TimetableLoader_fe:
         for period in practical_lectures:
             self.assign_lecture_randomly(period)
         
-        for period in list(lectures):  # Create a copy of 'lectures' to avoid modifying it during iteration
-            if self.assign_lecture_randomly(period):
-                lectures.remove(period)
+        # for period in list(lectures):  # Create a copy of 'lectures' to avoid modifying it during iteration
+        #     if self.assign_lecture_randomly(period):
+        #         lectures.remove(period)
 
         print(type(lectures))
         timetable = self.create_dataframe()
@@ -115,7 +113,7 @@ def extract_columns(dataframe):
 
 div_e = TimetableLoader_fe()
 
-complete_timetable = div_e.generate_complete_timetable(sem=1, is_theory=1, is_comp=1)
+complete_timetable = div_e.generate_complete_timetable(sem=1, is_comp=1)
 print(complete_timetable)
 
 
