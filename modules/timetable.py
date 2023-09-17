@@ -1,3 +1,5 @@
+from collections import Counter
+from itertools import groupby
 import numpy as np
 import datetime
 import pandas as pd
@@ -12,7 +14,7 @@ class TimetableLoader_fe:
         self.term = term
         self.division = division
         self.days = ['mon', 'tue', 'wed', 'thu', 'fri']
-        self.time_slots = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'C3']
+        self.time_slots = ['  8:15-9:15  ', '  9:15-10:15  ', '  10:30-11:30  ', '  11:30-12:30  ', '  1:15-2:15  ', '  2:15-3:15  ', '  3:15-4:15  ']
         self.timetable = np.empty((len(self.days), (len(self.time_slots))), dtype=object)
 
     def assign_lecture(self, row, col, lecture):
@@ -20,29 +22,34 @@ class TimetableLoader_fe:
 
     def assign_lecture_randomly(self, lecture):
         practical_cells = [(i, j) for i in range(0, 5) for j in range(0, 6, 2) if self.timetable[i, j] is None]
+        
+        # practical_cells = [cell for key, group in groupby(sorted(practical_cells), key=lambda x: x[0]) for cell in random.sample(list(group), min(2, len(list(group))))][:7]
+
+
         if lecture['Course type'] == 'Theory':
             if lecture['Abbreviation'] == 'PE':
                 empty_cells = [(i, 6) for i in range(5) if self.timetable[i, 6] is None]
             else:
-                empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots)-1) if self.timetable[i, j] is None]
+                empty_cells = [(i, j) for i in range(len(self.days)) for j in range(len(self.time_slots) - 1) if self.timetable[i, j] is None]
 
             if empty_cells:
-                random_cell = random.choice(empty_cells)
-                self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+                # Filter out empty cells where a theory lecture with the same abbreviation is not already present in the row.
+                empty_cells = [(i, j) for i, j in empty_cells if all(self.timetable[i, k] != lecture['Abbreviation'] for k in range(len(self.time_slots)))]
 
-        if lecture['Course type'] == 'Practical':
+                if empty_cells:
+                    random_cell = random.choice(empty_cells)
+                    self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
+                    return True  # Successfully assigned a theory lecture
+
+        elif lecture['Course type'] == 'Practical':
             if practical_cells:
                 random_cell = random.choice(practical_cells)
                 self.timetable[random_cell[0], random_cell[1]] = lecture['Abbreviation']
-                self.timetable[random_cell[0], random_cell[1]+1] = lecture['Abbreviation']
+                self.timetable[random_cell[0], random_cell[1] + 1] = lecture['Abbreviation']
+                return True  # Successfully assigned a practical lecture
 
-    def print_timetable(self):
-        # Iterate over rows and columns to print only the subject name
-        for i, day in enumerate(self.days):
-            for j, time_slot in enumerate(self.time_slots):
-                lecture = self.timetable[i, j]
-                if lecture is not None and 'subject' in lecture:
-                    print(f"{day}-{time_slot}: {lecture['subject']}")
+        return False  # No assignment was made
+
 
     def create_dataframe(self):
         data = self.timetable
@@ -59,43 +66,34 @@ class TimetableLoader_fe:
         if sem == 1:
             if is_comp:
                 practical_lectures = extract_columns(subject.sem1_computer_practical)
-            else:
-                practical_lectures = extract_columns(subject.sem1_non_computer_practical)
-        else:
-            if is_comp:
-                practical_lectures = extract_columns(subject.sem2_computer_practical)
-            else:
-                practical_lectures = extract_columns(subject.sem2_non_computer_practical)
-
-        random.shuffle(practical_lectures)
-
-        for period in practical_lectures:
-            self.assign_lecture_randomly(period)
-
-        if sem == 1:
-            if is_comp:
                 lectures = extract_columns(subject.sem1_computer_theory)
             else:
+                practical_lectures = extract_columns(subject.sem1_non_computer_practical)
                 lectures = extract_columns(subject.sem1_non_computer_theory)
         else:
             if is_comp:
+                practical_lectures = extract_columns(subject.sem2_computer_practical)
                 lectures = extract_columns(subject.sem2_computer_theory)
             else:
+                practical_lectures = extract_columns(subject.sem2_non_computer_practical)
                 lectures = extract_columns(subject.sem2_non_computer_theory)
 
-        random.shuffle(lectures)
-
-        for period in lectures:
+        random.shuffle(practical_lectures)
+        for period in practical_lectures:
             self.assign_lecture_randomly(period)
+        
+        for period in list(lectures):  # Create a copy of 'lectures' to avoid modifying it during iteration
+            if self.assign_lecture_randomly(period):
+                lectures.remove(period)
 
+        print(type(lectures))
         timetable = self.create_dataframe()
         timetable = timetable.fillna("--")
 
         return timetable
 
-
 def extract_columns(dataframe):
-    result_list = []
+    list = []
 
     for _, row in dataframe.iterrows():
         name = row['Name']
@@ -103,97 +101,54 @@ def extract_columns(dataframe):
         hours = row['Theory hours']
         practical_hours = row['Practical hours (per batch)']
         course_type = row['Course type']
-        # Extend the result list with the lecture abbreviation repeated according to its assigned hours
+        
         if(course_type=='Theory'):
-            result_list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}] * hours)
+            list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}] * hours)
         else:
-            result_list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}])
-    return result_list
-
-def generate_tt(sem=1, is_theory=1, is_comp=1):
-    df = TimetableLoader_fe()
-    if(sem==1):
-        if(is_comp):    
-            if(is_theory):
-                lectures = extract_columns(subject.sem1_computer_theory)
-            else:
-                lectures = extract_columns(subject.sem1_computer_practical)
-        else:
-            if(is_theory):
-                lectures = extract_columns(subject.sem1_non_computer_theory)
-            else:
-                lectures = extract_columns(subject.sem1_non_computer_theory)
-    else:
-        if(is_comp):    
-            if(is_theory):
-                lectures = extract_columns(subject.sem2_computer_theory)
-            else:
-                lectures = extract_columns(subject.sem2_computer_practical)
-        else:
-            if(is_theory):
-                lectures = extract_columns(subject.sem2_non_computer_theory)
-            else:
-                lectures = extract_columns(subject.sem2_non_computer_theory)
-
-    random.shuffle(lectures)
-
-    for period in lectures:
-        df.assign_lecture_randomly(period)
-
-    timetable = df.create_dataframe()
-    timetable = timetable.fillna("--")
-
-    return timetable
+            list.extend([{'Name': name, 'Abbreviation': abbreviation, 'Course type': course_type}] * int(practical_hours/2))
+    
+    return list
 
 
-def genrate_timetable_for_division(sem=1, is_comp=1):
-    df = TimetableLoader_fe()
-    if(sem==1):
-        if(is_comp):    
-            lectures = extract_columns(subject.sem1_computer_theory)
-        else:
-            lectures = extract_columns(subject.sem1_non_computer_theory)
-    else:
-        if(is_comp):    
-            lectures = extract_columns(subject.sem2_computer_theory)
-        else:
-            lectures = extract_columns(subject.sem2_non_computer_theory)
-    random.shuffle(lectures)
-
-    for period in lectures:
-        df.assign_lecture_randomly(period)
-
-    if(sem==1):
-        if(is_comp):    
-            lectures = extract_columns(subject.sem1_computer_practical)
-        else:
-            lectures = extract_columns(subject.sem1_non_computer_practical)
-    else:
-        if(is_comp):    
-            lectures = extract_columns(subject.sem2_computer_practical)
-        else:
-            lectures = extract_columns(subject.sem2_non_computer_practical)
-    random.shuffle(lectures)
-
-    for period in lectures:
-        df.assign_lecture_randomly(period)
-
-    timetable = df.create_dataframe()
-    timetable = timetable.fillna("--")
-
-    return timetable
-
-
-# divE_semII_practical = generate_tt(sem=2,is_theory=0,is_comp=1)
-# print(divE_semII_practical)
-
-# divE_semII_theory = generate_tt(sem=2,is_theory=1,is_comp=1)
-# print(divE_semII_theory)
-
-# divE_semII = genrate_timetable_for_division(2,1)
-# print(divE_semII)
+#####################################################################################
+#####################################################################################
 
 div_e = TimetableLoader_fe()
 
 complete_timetable = div_e.generate_complete_timetable(sem=1, is_theory=1, is_comp=1)
 print(complete_timetable)
+
+
+
+
+
+
+
+
+######
+#This code snippet calculates the number of unique lectures and practicals in timetable
+flat_values = complete_timetable.values.flatten()
+pr_values_counts = {}
+other_values_counts = {}
+
+for value in flat_values:
+    if "(pr)" in value and value != "--":
+        if value in pr_values_counts:
+            pr_values_counts[value] += 1
+        else:
+            pr_values_counts[value] = 1
+    elif "(pr)" not in value and value != "--":
+        if value in other_values_counts:
+            other_values_counts[value] += 1
+        else:
+            other_values_counts[value] = 1
+
+pr_values_counts = {key: value // 2 for key, value in pr_values_counts.items()}
+
+print("\nPracticals")
+for value, count in pr_values_counts.items():
+    print(f"Value: {value}, Count: {count}")
+
+print("\nTheory")
+for value, count in other_values_counts.items():
+    print(f"Value: {value}, Count: {count}")
