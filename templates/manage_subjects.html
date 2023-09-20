@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Subjects</title>
+</head>
+<body>
+    <h1>Manage Subjects</h1>
+
+    <h2>Add New Subject</h2>
+    <form method="POST" action="/">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="abbreviation">Abbreviation:</label>
+        <input type="text" id="abbreviation" name="abbreviation" required><br><br>
+        
+        <label for="theory_hours">Theory Hours:</label>
+        <input type="number" id="theory_hours" name="theory_hours" required><br><br>
+
+        <label for="semester">Semester:</label>
+        <input type="number" id="semester" name="semester" required><br><br>
+        
+        <label for="practical_hours">Practical Hours:</label>
+        <input type="number" id="practical_hours" name="practical_hours" required><br><br>
+        
+        <input type="submit" value="Add Subject">
+    </form>
+
+    <h2>Existing Subjects</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Abbreviation</th>
+            <th>Theory Hours</th>
+            <th>Semester</th>
+            <th>Practical Hours</th>
+            <th>Actions</th>
+        </tr>
+        {% for subject in subjects %}
+        <tr>
+            <td>{{ subject[0] }}</td>
+            <td>{{ subject[1] }}</td>
+            <td>{{ subject[2] }}</td>
+            <td>{{ subject[3] }}</td>
+            <td>{{ subject[4] }}</td>
+            <td>{{ subject[5] }}</td>
+            <td>
+                <a href="{{ url_for('edit_subject', id=subject[0]) }}">Edit</a>
+                <form method="POST" action="/delete_subject/{{ subject[0] }}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
