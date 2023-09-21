@@ -29,7 +29,7 @@
     <h2>Existing Subjects</h2>
     <table>
         <tr>
-            <th>ID</th>
+            <th>Index</th> <!-- Changed the column header -->
             <th>Name</th>
             <th>Abbreviation</th>
             <th>Theory Hours</th>
@@ -39,7 +39,7 @@
         </tr>
         {% for subject in subjects %}
         <tr>
-            <td>{{ subject[0] }}</td>
+            <td>{{ loop.index }}</td> <!-- Use loop.index to display row numbers -->
             <td>{{ subject[1] }}</td>
             <td>{{ subject[2] }}</td>
             <td>{{ subject[3] }}</td>
